@@ -339,7 +339,9 @@ class ArmSP(Arm):
         if verbose == True:
             logger_rew.info('=== %s ===' %self.action)
         output_path = self.get_output_path(output_folder, input_path)
+        logger_rew.info('SP parse begin: %s' %input_path)
         pe = pefile.PE(input_path)
+        logger_rew.info('SP parse done: %s section_count=%d' %(input_path, len(pe.sections)))
 
         # find out all available_sections
         dict_idx_to_available_size = {}
@@ -347,7 +349,8 @@ class ArmSP(Arm):
             available_size = self.get_available_size_safe(pe, idx)
             if available_size > 0:
                 dict_idx_to_available_size[idx] = available_size
-                
+        logger_rew.info('SP available sections: %s' %dict_idx_to_available_size)
+
         if len(dict_idx_to_available_size) == 0:
             if verbose == True:
                 logger_rew.info('no section has free space, return the original sample')
