@@ -141,6 +141,7 @@ class Sample:
     def copy_to_scan_folder(self, scan_folder):
         self.scan_status = SCAN_STATUS_WAITING
         self.copy_time = time.time()
+        logger_rew.info('copy_to_scan_folder: %s -> %s' %(self.current_exe_path, scan_folder + basename(self.current_exe_path)))
         Utils.safe_copy(self.current_exe_path, scan_folder + basename(self.current_exe_path))
         #if Utils.get_vm_location() == VM_LOCAL:
         #    Utils.safe_copy(self.current_exe_path, scan_folder + basename(self.current_exe_path))

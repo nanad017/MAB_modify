@@ -74,6 +74,7 @@ class Classifier:
             if os.path.exists(file_path) == False:
                 logger_cla.info('file does not exist')
                 return 0
+            logger_cla.info('evaluate file: %s' %file_path)
             #result = self.model.predict(file_path)
             evasive = self.model.is_evasive(file_path)
             if evasive == False:

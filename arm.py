@@ -376,13 +376,29 @@ class ArmSP(Arm):
             append_content = bytes(append_content[:available_size])
 
         target_section = pe.sections[append_section_idx]
+        write_offset = target_section.PointerToRawData + target_section.Misc_VirtualSize
+        logger_rew.info(
+            'SP preparing write: input=%s output=%s section_idx=%d available=%d write_offset=0x%x raw_ptr=0x%x virtual_size=0x%x raw_size=0x%x',
+            input_path,
+            output_path,
+            append_section_idx,
+            available_size,
+            write_offset,
+            target_section.PointerToRawData,
+            target_section.Misc_VirtualSize,
+            target_section.SizeOfRawData,
+        )
         pe.set_bytes_at_offset(target_section.PointerToRawData + target_section.Misc_VirtualSize, append_content)
         if verbose == True:
             logger_rew.info('section_idx: %d, content lenth: %d' %(append_section_idx, len(append_content)))
+        logger_rew.info('SP pe.write begin: %s' %output_path)
         pe.write(output_path)
+        logger_rew.info('SP pe.write done: %s' %output_path)
 
         # verify action changes
+        logger_rew.info('SP verify parse begin: %s' %output_path)
         pe = self.try_parse_pe(output_path)
+        logger_rew.info('SP verify parse done: %s parsed=%s' %(output_path, pe != None))
         if pe == None:
             if verbose == True:
                 logger_rew.info('pefile cannot parse, restore original file')
