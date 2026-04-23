@@ -366,16 +366,22 @@ class ArmSP(Arm):
 
         available_size = dict_idx_to_available_size[append_section_idx]
 
-        # arm first use, save for later use 
+        # arm first use, save for later use
         if self.section_idx == None:
             self.section_idx = append_section_idx
         if self.content == None:
+            logger_rew.info('SP random content begin')
             _, _, self.content = Utils.get_random_content()
+            logger_rew.info('SP random content done: len=%d' %len(self.content))
+
+        if len(self.content) == 0:
+            logger_rew.info('SP empty content detected, fallback to one null byte')
+            self.content = bytes([0])
 
         append_content = self.content
         if len(append_content) != 1:            # if it's SP1, do not need to extend content
             while available_size > len(append_content):   # extend content
-                append_content += self.content                    
+                append_content += self.content
             append_content = bytes(append_content[:available_size])
 
         target_section = pe.sections[append_section_idx]

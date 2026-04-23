@@ -31,6 +31,10 @@ Tac dung:
 
 Da them log chi tiet trong `ArmSP.transfer()` quanh doan xu ly `SP`:
 
+- Log moc rat som:
+  - `SP parse begin: ...`
+  - `SP parse done: ...`
+  - `SP available sections: ...`
 - Log thong tin truoc khi ghi:
   - `input`
   - `output`
@@ -41,6 +45,9 @@ Da them log chi tiet trong `ArmSP.transfer()` quanh doan xu ly `SP`:
   - `virtual_size`
   - `raw_size`
 - Log moc:
+  - `SP random content begin`
+  - `SP random content done: len=...`
+  - `SP empty content detected, fallback to one null byte`
   - `SP pe.write begin: ...`
   - `SP pe.write done: ...`
   - `SP verify parse begin: ...`
@@ -48,6 +55,9 @@ Da them log chi tiet trong `ArmSP.transfer()` quanh doan xu ly `SP`:
 
 Tac dung:
 
+- Biet process co bi dung ngay luc parse PE hay luc quet section hay khong.
+- Biet content ngau nhien lay ra co rong khong.
+- Chan truong hop `self.content` rong gay vong lap vo han trong doan mo rong `append_content`.
 - Biet process dung truoc `pe.write`, trong `pe.write`, hay sau `pe.write`.
 
 ### `sample.py`
@@ -89,6 +99,28 @@ tail -n 80 log/fault.log
 ```
 
 ## Dien giai nhanh
+
+- Neu log dung o:
+  - `=== SP ===`
+  - `SP parse begin: ...`
+  - `SP parse done: ...`
+  - `SP available sections: {...}`
+  nhung khong co log tiep theo,
+  thi kha nang cao la bi ket o buoc lay random content hoac vong lap mo rong content.
+
+- Nguyen nhan nghiem trong da duoc khoanh vung:
+  - Neu `Utils.get_random_content()` tra ve `content` rong (`b''`),
+    thi doan:
+
+```python
+while available_size > len(append_content):
+    append_content += self.content
+```
+
+  se lap vo han vi `len(append_content)` luon bang `0`.
+
+- Da them phong ve:
+  - Neu `len(self.content) == 0` thi fallback thanh `bytes([0])`.
 
 - Neu `rewriter.log` co `SP pe.write begin` nhung khong co `SP pe.write done`:
   - Kha nang cao bi dung trong `pe.write(...)`.
